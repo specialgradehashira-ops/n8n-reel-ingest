@@ -1,13 +1,17 @@
-# Render will build this image
+# n8n official image is Alpine-based -> use apk, not apt
 FROM n8nio/n8n:latest
 
-# Add python, pip, ffmpeg, yt-dlp
+# install python, pip, ffmpeg, bash (needed by Execute Command), and yt-dlp
 USER root
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 python3-pip ffmpeg ca-certificates curl bash \
- && pip3 install --no-cache-dir yt-dlp \
- && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+      python3 \
+      py3-pip \
+      ffmpeg \
+      bash \
+      ca-certificates \
+      curl \
+ && pip3 install --no-cache-dir yt-dlp
 
-# persist n8n data & files in /data (Render Disk)
+# persist data and credentials on the mounted disk
 ENV N8N_USER_FOLDER=/data
 USER node
